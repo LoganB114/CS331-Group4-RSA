@@ -7,7 +7,7 @@ class rsaKey:
     This class represents a complete RSA key with public and private components,
     along with metadata about the key generation process. Its simple, and easy.
     """
-    def __init__(self, e, d, n):
+    def __init__(self, e, n):
         """
         Initialize an RSA key with all necessary components.
 
@@ -16,22 +16,8 @@ class rsaKey:
             d (int): Private exponent (modular inverse of e modulo phi)
             n (int): RSA modulus (product of two primes)
         """
-        self.n = n
         self.e = e
-        self.d = d
-
-    def to_dict(self):
-        """
-        Convert the key components to a dictionary for serialization.
-
-        Returns:
-            dict: Dictionary containing all key components with their values
-        """
-        return {
-            'n': self.n,
-            'e': self.e,
-            'd': self.d
-        }
+        self.n = n
 
     def save_to_file(self, filename):
         """
@@ -43,11 +29,9 @@ class rsaKey:
         """
         with open(filename, 'w', newline='') as f:
             writer = csv.writer(f, delimiter='\t')
-            writer.writerow(['Component', 'Value'])
-            for key, value in self.to_dict().items():
-                writer.writerow([key, value])
+            writer.writerow([self.e, self.n])
 
-    @classmethod
+    @staticmethod
     def load_from_file(cls, filename):
         """
         Load an RSA key from a TSV file.
@@ -60,7 +44,6 @@ class rsaKey:
         """
         with open(filename, 'r') as f:
             reader = csv.reader(f, delimiter='\t')
-            next(reader)  # Skip header
-            data = {row[0]: int(row[1]) for row in reader}
-        return cls(data['e'], data['d'], data['n'])
+            data = next(reader)
+            return rsaKey(data[0], data[1])
 

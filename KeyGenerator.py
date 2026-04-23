@@ -156,4 +156,4 @@ def generate_keypair(bitlength, p=None, q=None, e=None, close_primes=False):
         e = 65537  # Common choice for e
     d = modular_inverse(e, phi)
 
-    return rsaKey(e, d, n)
+    return rsaKey(e, n), rsaKey(d, n)

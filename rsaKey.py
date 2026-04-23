@@ -9,24 +9,18 @@ class rsaKey:
     This class represents a complete RSA key with public and private components,
     along with metadata about the key generation process. Its simple, and easy.
     """
-    def __init__(self, e, d, p, q, bitlength):
+    def __init__(self, e, d, n):
         """
         Initialize an RSA key with all necessary components.
 
         Args:
             e (int): Public exponent
             d (int): Private exponent (modular inverse of e modulo phi)
-            p (int): First large prime factor
-            q (int): Second large prime factor
-            bitlength (int): Total bit length of the key
+            n (int): RSA modulus (product of two primes)
         """
-        self.n = p * q
+        self.n = n
         self.e = e
         self.d = d
-        self.p = p
-        self.q = q
-        self.bitlength = bitlength
-        self.phi = (p - 1) * (q - 1)  # Euler's totient function
 
     def to_dict(self):
         """
@@ -38,10 +32,7 @@ class rsaKey:
         return {
             'n': self.n,
             'e': self.e,
-            'd': self.d,
-            'p': self.p,
-            'q': self.q,
-            'bitlength': self.bitlength
+            'd': self.d
         }
 
     def save_to_file(self, filename):
@@ -73,7 +64,7 @@ class rsaKey:
             reader = csv.reader(f, delimiter='\t')
             next(reader)  # Skip header
             data = {row[0]: int(row[1]) for row in reader}
-        return cls(data['e'], data['d'], data['p'], data['q'], data['bitlength'])
+        return cls(data['e'], data['d'], data['n'])
 
 class KeyGenerator:
     """
@@ -208,32 +199,42 @@ class KeyGenerator:
         return x % phi
 
     @staticmethod
-    def generate_keypair(bitlength, close_primes=False):
+    def generate_keypair(bitlength, p=None, q=None, e=None, close_primes=False):
         """
         Generate a complete RSA key pair.
 
         Args:
             bitlength (int): Total bit length of the key
+            p (int): First prime number (optional)
+            q (int): Second prime number (optional)
             close_primes (bool): If True, generate primes close together
                                 (vulnerable to Fermat factorization)
 
         Returns:
             rsaKey: Complete RSA key pair object
         """
-        if close_primes:
-            p, q = KeyGenerator.generate_close_primes(bitlength)
+        if (p is not None and q is not None):
+            if not (KeyGenerator.miller_rabin_test(p) and KeyGenerator.miller_rabin_test(q)):
+                raise ValueError("Both p and q must be prime.")
         else:
-            p = KeyGenerator.generate_prime(bitlength // 2)
-            q = KeyGenerator.generate_prime(bitlength // 2)
-            while p == q:
+            if close_primes:
+                p, q = KeyGenerator.generate_close_primes(bitlength)
+            else:
+                p = KeyGenerator.generate_prime(bitlength // 2)
                 q = KeyGenerator.generate_prime(bitlength // 2)
+                while p == q:
+                    q = KeyGenerator.generate_prime(bitlength // 2)
 
         n = p * q
         phi = (p - 1) * (q - 1)
-        e = 65537  # Common choice for e
+        if e is not None:
+            if KeyGenerator.extended_gcd(e, phi)[0] != 1:
+                raise ValueError("e must be coprime to phi.")
+        else:
+            e = 65537  # Common choice for e
         d = KeyGenerator.modular_inverse(e, phi)
 
-        return rsaKey(e, d, p, q, bitlength)
+        return rsaKey(e, d, n)
 
 
 

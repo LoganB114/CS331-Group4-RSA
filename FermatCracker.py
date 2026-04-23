@@ -44,4 +44,4 @@ def crack(n, publicExponent):
     p, q = factors
     phi = (p - 1) * (q - 1)
     d = KeyGenerator.modular_inverse(publicExponent, phi)
-    return rsaKey(publicExponent, d, p, q, publicExponent.bit_length())
+    return rsaKey(publicExponent, d, n)

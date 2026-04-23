@@ -1,4 +1,5 @@
-from rsaKey import KeyGenerator, rsaKey
+from rsaKey import rsaKey
+import KeyGenerator
 
 def is_perfect_square(n):
     """

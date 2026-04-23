@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import time
-from rsaKey import KeyGenerator
+import KeyGenerator
 from FermatCracker import crack
 
 class RSA_GUI:

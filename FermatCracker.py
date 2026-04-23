@@ -29,15 +29,16 @@ def factorize(n, rounds=100):
         x += 1
     return None
 
-def crack(publicExponent):
+def crack(n, publicExponent):
     """
     Attempt to crack an RSA key by factorizing n using Fermat's method.
     Args:
+        n (int): The RSA modulus
         publicExponent (int): The RSA public exponent
     Returns:
         rsaKey: The cracked RSA key, or None if factorization fails
     """
-    factors = factorize(publicExponent)
+    factors = factorize(n)
     if factors is None:
         return None
     p, q = factors

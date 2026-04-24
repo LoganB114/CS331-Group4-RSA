@@ -9,6 +9,7 @@ class rsaKey:
     along with metadata about the key generation process. Its simple, and easy.
     """
     def __init__(self, e, n):
+    def __init__(self, e, n):
         """
         Initialize an RSA key with all necessary components.
 
@@ -67,8 +68,6 @@ class rsaKey:
             reader = csv.reader(f, delimiter='\t')
             data = next(reader)
             return rsaKey(data[0], data[1])
-
-
     def encrypt(self, text):
         buffer = int.from_bytes(bytes(text,"utf-8"))
         buffer = pow(buffer,self.e,self.n).to_bytes()
@@ -79,4 +78,3 @@ class rsaKey:
         buffer = int.from_bytes(buffer)
         buffer = pow(buffer, self.e, self.n).to_bytes()
         return buffer.decode("utf-8")
-        

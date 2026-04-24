@@ -1,4 +1,5 @@
 import csv
+import base64
 
 class rsaKey:
     """
@@ -13,7 +14,6 @@ class rsaKey:
 
         Args:
             e (int): Public exponent
-            d (int): Private exponent (modular inverse of e modulo phi)
             n (int): RSA modulus (product of two primes)
         """
         self.e = e
@@ -47,3 +47,13 @@ class rsaKey:
             data = next(reader)
             return rsaKey(data[0], data[1])
 
+    def encrypt(self, text):
+        buffer = int.from_bytes(bytes(text,"utf-8"))
+        buffer = pow(buffer,self.e,self.n).to_bytes()
+        return base64.encodebytes(buffer)
+
+    def decrypt(self, text):
+        buffer = base64.decode(text)
+        buffer = int.from_bytes(buffer)
+        buffer = pow(buffer, self.e, self.n).to_bytes()
+        return buffer.decode("utf-8")

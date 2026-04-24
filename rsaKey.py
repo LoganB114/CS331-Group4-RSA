@@ -9,7 +9,6 @@ class rsaKey:
     along with metadata about the key generation process. Its simple, and easy.
     """
     def __init__(self, e, n):
-    def __init__(self, e, n):
         """
         Initialize an RSA key with all necessary components.
 

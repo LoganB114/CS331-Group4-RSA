@@ -1,4 +1,5 @@
 import csv
+import base64
 
 class rsaKey:
     """
@@ -7,13 +8,12 @@ class rsaKey:
     This class represents a complete RSA key with public and private components,
     along with metadata about the key generation process. Its simple, and easy.
     """
-    def __init__(self, e=3, d=5, p=7, q=11, bitlength=1048):
+    def __init__(self, e, n):
         """
         Initialize an RSA key with all necessary components.
 
         Args:
-            e (int): Public exponent
-            d (int): Private exponent (modular inverse of e modulo phi)
+            e (int): exponent
             n (int): RSA modulus (product of two primes)
         """
 
@@ -23,28 +23,10 @@ class rsaKey:
         else:
             self.e = e
         
-        if (not isinstance(d, int) or d < 0):
-            self.d = 5
+        if (not isinstance(n, int) or n < 0):
+            self.n = 5
         else:
-            self.d = d
-        
-        if (not isinstance(p, int) or p < 0):
-            self.p = 7
-        else:    
-            self.p = p
-
-        if (not isinstance(q, int) or q < 0):
-            self.q = 11
-        else:
-            self.q = q
-        
-        if (not isinstance(q, int) or q < 0):
-            self.bitlength = 1048
-        else:
-            self.bitlength = bitlength
-        
-        self.n = p * q
-        self.phi = (p - 1) * (q - 1)  # Euler's totient function
+            self.n = n
 
     def to_dict(self):
         """
@@ -56,10 +38,6 @@ class rsaKey:
         return {
             'n': self.n,
             'e': self.e,
-            'd': self.d,
-            'p': self.p,
-            'q': self.q,
-            'bitlength': self.bitlength
         }
 
     def save_to_file(self, filename):
@@ -90,3 +68,15 @@ class rsaKey:
             data = next(reader)
             return rsaKey(data[0], data[1])
 
+
+    def encrypt(self, text):
+        buffer = int.from_bytes(bytes(text,"utf-8"))
+        buffer = pow(buffer,self.e,self.n).to_bytes()
+        return base64.encodebytes(buffer)
+
+    def decrypt(self, text):
+        buffer = base64.decode(text)
+        buffer = int.from_bytes(buffer)
+        buffer = pow(buffer, self.e, self.n).to_bytes()
+        return buffer.decode("utf-8")
+        

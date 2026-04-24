@@ -7,8 +7,9 @@ self.assertFalse
 
 import unittest
 import rsaKey as rk
+import KeyGenerator as kg
 
-class Test_rsa_Key(unittest.TestCase):
+class Test_file(unittest.TestCase):
 
     def test_init(self):
         """
@@ -30,7 +31,6 @@ class Test_rsa_Key(unittest.TestCase):
 
         self.assertFalse(rk.rsaKey(3,3,3,3,3) == {"n":"3","e":"3", "d": "3", "p":"3", "q":"3", "bitlength":"3"})
 
-    
 
 if __name__ == '__main__':
     unittest.main()

@@ -69,12 +69,25 @@ class rsaKey:
             return rsaKey(data[0], data[1])
 
     def encrypt(self, text):
+        """
+         Encrypt a plaintext string using the RSA key.
+         Args:            text (str): The plaintext string to encrypt
+         Returns:
+            str: Base64-encoded ciphertext resulting from RSA encryption
+        """
         buffer = int.from_bytes(bytes(text,"utf-8"))
         buffer = pow(buffer,self.e,self.n)
         buffer = buffer.to_bytes((buffer.bit_length() + 7) // 8)
         return base64.b64encode(buffer)
 
     def decrypt(self, text):
+        """
+        Decrypt a base64-encoded ciphertext string using the RSA key.
+        Args:
+            text (str): Base64-encoded ciphertext to decrypt
+        Returns:
+            str: Decrypted plaintext string resulting from RSA decryption
+        """
         buffer = int.from_bytes(base64.b64decode(text))
         buffer = pow(buffer, self.e, self.n)
         buffer = buffer.to_bytes((buffer.bit_length() + 7) // 8)

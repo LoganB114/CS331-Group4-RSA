@@ -9,7 +9,7 @@ class rsaKey:
     This class represents a complete RSA key with public and private components,
     along with metadata about the key generation process. Its simple, and easy.
     """
-    def __init__(self, e, d, p, q, bitlength):
+    def __init__(self, e=3, d=5, p=7, q=11, bitlength=1048):
         """
         Initialize an RSA key with all necessary components.
 
@@ -20,12 +20,34 @@ class rsaKey:
             q (int): Second large prime factor
             bitlength (int): Total bit length of the key
         """
+
+        # enforcing that variables are what they are supposed to be.
+        if (not isinstance(e, int) or e < 0):
+            self.e = 3
+        else:
+            self.e = e
+        
+        if (not isinstance(d, int) or d < 0):
+            self.d = 5
+        else:
+            self.d = d
+        
+        if (not isinstance(p, int) or p < 0):
+            self.p = 7
+        else:    
+            self.p = p
+
+        if (not isinstance(q, int) or q < 0):
+            self.q = 11
+        else:
+            self.q = q
+        
+        if (not isinstance(q, int) or q < 0):
+            self.bitlength = 1048
+        else:
+            self.bitlength = bitlength
+        
         self.n = p * q
-        self.e = e
-        self.d = d
-        self.p = p
-        self.q = q
-        self.bitlength = bitlength
         self.phi = (p - 1) * (q - 1)  # Euler's totient function
 
     def to_dict(self):

@@ -19,7 +19,9 @@ build/
 .DS_Store
 Thumbs.db
 
-# Project specific
+# Project specific (RSA Keys and Metrics)
+*.tsv
+*.csv
 *.key
 *.pem
 keys/

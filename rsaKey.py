@@ -66,19 +66,19 @@ class rsaKey:
         with open(filename, 'r') as f:
             reader = csv.reader(f, delimiter='\t')
             data = next(reader)
-            return rsaKey(data[0], data[1])
+            # Bridger FIX: Convert the strings to ints before creating the rsaKey
+            return rsaKey(int(data[0]), int(data[1]))
 
     def encrypt(self, text):
-        """
-         Encrypt a plaintext string using the RSA key.
-         Args:            text (str): The plaintext string to encrypt
-         Returns:
-            str: Base64-encoded ciphertext resulting from RSA encryption
-        """
-        buffer = int.from_bytes(bytes(text,"utf-8"))
-        buffer = pow(buffer,self.e,self.n)
-        buffer = buffer.to_bytes((buffer.bit_length() + 7) // 8)
-        return base64.b64encode(buffer)
+            buffer = int.from_bytes(bytes(text, "utf-8"), byteorder="big")
+            
+            #Bridger ADDED: Prevent the math from wrapping around and destroying data
+            if buffer >= self.n:
+                raise ValueError(f"Message is too large for this RSA key. Please use a larger bit length.")
+                
+            buffer = pow(buffer, self.e, self.n)
+            buffer = buffer.to_bytes((buffer.bit_length() + 7) // 8, byteorder="big")
+            return base64.b64encode(buffer)
 
     def decrypt(self, text):
         """

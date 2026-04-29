@@ -223,7 +223,7 @@ class RSA_GUI:
             elapsed_ms = (end_time - start_time) / 1_000_000 
 
             success = cracked_key is not None
-            MetricsManage.log_crack_time(n_bit_length, elapsed_ms, success)
+            MetricsManage.log_crack_time(n_bit_length, rounds, elapsed_ms, success)
 
             self.crack_output.config(state=tk.NORMAL)
             if success:

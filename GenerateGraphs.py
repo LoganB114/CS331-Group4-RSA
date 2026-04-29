@@ -6,34 +6,60 @@ def create_performance_graphs():
         # Load the data we recorded
         data = pd.read_csv('cracking_metrics.csv')
         
-        # only graph successful cracks
+        # Split data into successes and failures
         successes = data[data['Success'] == True]
+        failures = data[data['Success'] == False]
 
-        # Create a window with 2 graphs side-by-side (1 row, 2 columns)
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 10))
 
-        # --- Graph 1: Time vs. Bit Length ---
-        ax1.scatter(successes['Modulus Bit Length'], successes['Time Elapsed (ms)'], color='blue', s=60)
-        ax1.plot(successes['Modulus Bit Length'], successes['Time Elapsed (ms)'], linestyle='--', color='blue', alpha=0.4)
-        ax1.set_title('RSA Fermat Cracking: Time vs Key Size', fontsize=12, fontweight='bold')
+        # ROW 1: SUCCESSFUL CRACKS (BLUE DOTS)
+        
+        # --- Graph 1 (Top-Left): Success - Time vs Bit Length ---
+        if not successes.empty:
+            ax1.scatter(successes['Modulus Bit Length'], successes['Time Elapsed (ms)'], color='blue', s=60)
+        ax1.set_title('SUCCESS: Time vs Key Size', fontsize=12, fontweight='bold')
         ax1.set_xlabel('Key Bit Length', fontsize=10)
         ax1.set_ylabel('Time Elapsed (ms)', fontsize=10)
         ax1.grid(True, linestyle=':', alpha=0.7)
 
-        # --- Graph 2: Time vs. Number of Rounds ---
-        if 'Rounds' in successes.columns:
-            ax2.scatter(successes['Rounds'], successes['Time Elapsed (ms)'], color='darkred', s=60)
-            ax2.plot(successes['Rounds'], successes['Time Elapsed (ms)'], linestyle='--', color='darkred', alpha=0.4)
-            ax2.set_title('RSA Fermat Cracking: Time vs Loops/Rounds', fontsize=12, fontweight='bold')
+        # --- Graph 2 (Top-Right): Success - Time vs Rounds ---
+        if 'Rounds' in data.columns:
+            if not successes.empty:
+                ax2.scatter(successes['Rounds'], successes['Time Elapsed (ms)'], color='blue', s=60)
+            ax2.set_title('SUCCESS: Time vs Rounds', fontsize=12, fontweight='bold')
             ax2.set_xlabel('Number of Fermat Rounds', fontsize=10)
             ax2.set_ylabel('Time Elapsed (ms)', fontsize=10)
             ax2.grid(True, linestyle=':', alpha=0.7)
         else:
-            ax2.text(0.5, 0.5, "Column 'Rounds' not found in CSV.", 
-                     fontsize=12, color='red', ha='center', va='center')
-            ax2.set_title('RSA Fermat Cracking: Time vs Loops/Rounds')
+            ax2.text(0.5, 0.5, "Column 'Rounds' not found.", color='red', ha='center', va='center')
 
-        plt.tight_layout()
+        # ROW 2: FAILED CRACKS (RED X's)
+
+        # --- Graph 3 (Bottom-Left): Failure - Time vs Bit Length ---
+        if not failures.empty:
+            ax3.scatter(failures['Modulus Bit Length'], failures['Time Elapsed (ms)'], color='red', s=60, marker='x')
+        ax3.set_title('FAILURE: Time vs Key Size', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('Key Bit Length', fontsize=10)
+        ax3.set_ylabel('Time Elapsed (ms)', fontsize=10)
+        ax3.grid(True, linestyle=':', alpha=0.7)
+
+        # --- Graph 4 (Bottom-Right): Failure - Time vs Rounds ---
+        if 'Rounds' in data.columns:
+            if not failures.empty:
+                ax4.scatter(failures['Rounds'], failures['Time Elapsed (ms)'], color='red', s=60, marker='x')
+            ax4.set_title('FAILURE: Time vs Rounds', fontsize=12, fontweight='bold')
+            ax4.set_xlabel('Number of Fermat Rounds', fontsize=10)
+            ax4.set_ylabel('Time Elapsed (ms)', fontsize=10)
+            ax4.grid(True, linestyle=':', alpha=0.7)
+        else:
+            ax4.text(0.5, 0.5, "Column 'Rounds' not found.", color='red', ha='center', va='center')
+
+        fig.suptitle('RSA Fermat Cracking Performance Metrics', fontsize=16, fontweight='bold')
+
+        plt.tight_layout(pad=2.0, w_pad=2.0, h_pad=3.0)
+        
+        fig.subplots_adjust(top=0.92)
+
         plt.show()
 
     except FileNotFoundError:

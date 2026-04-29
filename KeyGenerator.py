@@ -140,12 +140,12 @@ def generate_keypair(bitlength, p=None, q=None, e=None, close_primes=False):
     Returns:
         rsaKey: Complete RSA key pair object
     """
-    if (p is not None and q is not None):
-        if not (miller_rabin_test(p) and miller_rabin_test(q)):
-            raise ValueError("Both p and q must be prime.")
+    if close_primes:
+        p, q = generate_close_primes(bitlength)
     else:
-        if close_primes:
-            p, q = generate_close_primes(bitlength)
+        if (p is not None and q is not None):
+            if not (miller_rabin_test(p) and miller_rabin_test(q)):
+                raise ValueError("Both p and q must be prime.")
         else:
             p = generate_prime(bitlength // 2)
             q = generate_prime(bitlength // 2)

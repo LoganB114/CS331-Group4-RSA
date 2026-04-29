@@ -72,8 +72,13 @@ def generate_close_primes(bitlength):
     p = generate_prime(bitlength // 2)
     # Generate q close to p
     q = p
+    if (q-1) % 6 == 0:
+        q += 4 # start with 6n-1 form
     while True:
         q += 2
+        if miller_rabin_test(q):
+            break
+        q+= 4 # alternate between 6n+1 and 6n-1 forms
         if miller_rabin_test(q):
             break
     return p, q

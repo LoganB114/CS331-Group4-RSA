@@ -83,20 +83,19 @@ class rsaKey:
         # If n bytes are required to store n, we need n - 1 bytes
         # so that a < n
         text_len = len(text)
-        block_size = self.n.bit_length() // 8 - 1
+        n_size = (self.n.bit_length() + 7) // 8
+        block_size = n_size - 1
         num_blocks = math.ceil(text_len/block_size)
-        all_bytes = bytearray(block_size * num_blocks)
-        text_bytes = bytearray(bytes(text, "utf-8"))
-        for c in range(0, text_len):
-            all_bytes[block_size - text_len + c] = text_bytes[c]
-        blocks = all_bytes[0::block_size]
+        #text_bytes = bytearray(text, "utf-8")
+        text_bytes = bytearray((block_size*num_blocks)-text_len)
+        text_bytes.extend(bytearray(text, "utf-8"))
+        all_bytes = bytearray()
+        blocks = text_bytes[0::block_size]
+        if isinstance(blocks, bytearray):
+            blocks = [blocks]
         for x in range(0, num_blocks):
-            print(bytes(blocks[x]))
-            number = pow(int.from_bytes(bytes(blocks[x])), self.e, self.n)
-            block = number.to_bytes(block_size)
-            for c in range(0, block_size):
-                print((x * block_size) + c)
-                #all_bytes[(x * block_size) + c] = block[c]
+            number = pow(int.from_bytes(blocks[x].to_bytes()), self.e, self.n)
+            all_bytes.extend(number.to_bytes(n_size))
         return all_bytes
 
     def decrypt(self, all_bytes: bytearray):
@@ -106,13 +105,14 @@ class rsaKey:
         Args:
             text (bytes): Base64 text to decrypt
         """
-        num_bytes = len(all_bytes)
-        block_size = math.floor(math.log2(self.n)) - 1
-        num_blocks = math.ceil(num_bytes/block_size)
-        blocks = all_bytes[0::block_size]
+        byte_size = len(all_bytes)
+        n_size = (self.n.bit_length() + 7) // 8
+        block_size = n_size - 1
+        num_blocks = math.ceil(byte_size/n_size)
+        text = bytearray()
+        blocks = all_bytes[0::n_size]
         for x in range(0, num_blocks):
-            number = pow(int.from_bytes(bytes(blocks)), self.e, self.n)
-            block = bytearray(number.to_bytes(block_size))
-            for c in range(0, block_size):
-                all_bytes[(x*block_size)+c] = block[c]
-        return all_bytes.decode("utf-8")
+            number = pow(int.from_bytes(blocks[x].to_bytes()), self.e, self.n)
+            n_block = number.to_bytes(n_size)
+            text.extend(n_block)
+        return text

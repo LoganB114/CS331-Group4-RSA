@@ -93,6 +93,10 @@ class RSA_GUI:
         self.target_e_var = tk.StringVar(value="65537")
         ttk.Entry(crack_frame, textvariable=self.target_e_var, width=70, font=self.mono_font).pack(pady=5)
 
+        ttk.Label(crack_frame, text="Number of rounds:").pack(pady=(10, 5))
+        self.rounds_var = tk.StringVar(value="100000")
+        ttk.Entry(crack_frame, textvariable=self.rounds_var, width=70, font=self.mono_font).pack(pady=5)
+
         ttk.Button(crack_frame, text="Crack with Fermat's Method", command=self.on_crack).pack(pady=20)
 
         self.crack_output = tk.Text(crack_frame, height=16, width=75, font=self.mono_font, 
@@ -200,6 +204,7 @@ class RSA_GUI:
         try:
             target_n = int(self.target_n_var.get().strip())
             target_e = int(self.target_e_var.get().strip())
+            rounds = int(self.rounds_var.get().strip())
             
             n_bit_length = target_n.bit_length()
             
@@ -210,7 +215,7 @@ class RSA_GUI:
             self.root.update()
 
             start_time = time.perf_counter_ns()
-            cracked_key = crack(target_n, target_e)
+            cracked_key = crack(target_n, target_e, rounds)
             end_time = time.perf_counter_ns()
             elapsed_ms = (end_time - start_time) / 1_000_000 
 

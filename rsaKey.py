@@ -83,19 +83,21 @@ class rsaKey:
         # If n bytes are required to store n, we need n - 1 bytes
         # so that a < n
         text_len = len(text)
-        block_size = math.floor(math.log2(self.n)) - 1
+        block_size = self.n.bit_length() // 8 - 1
         num_blocks = math.ceil(text_len/block_size)
         all_bytes = bytearray(block_size * num_blocks)
-        text_bytes = bytearray(text, "utf-8")
+        text_bytes = bytearray(bytes(text, "utf-8"))
         for c in range(0, text_len):
-            all_bytes[c] = text_bytes[c]
+            all_bytes[block_size - text_len + c] = text_bytes[c]
         blocks = all_bytes[0::block_size]
         for x in range(0, num_blocks):
+            print(bytes(blocks[x]))
             number = pow(int.from_bytes(bytes(blocks[x])), self.e, self.n)
             block = number.to_bytes(block_size)
             for c in range(0, block_size):
-                all_bytes[(x*block_size)+c] = block[c]
-        return all_bytes;
+                print((x * block_size) + c)
+                #all_bytes[(x * block_size) + c] = block[c]
+        return all_bytes
 
     def decrypt(self, all_bytes: bytearray):
         """

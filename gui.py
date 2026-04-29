@@ -6,6 +6,8 @@ import KeyGenerator
 from FermatCracker import crack
 from rsaKey import rsaKey
 from MetricsManage import MetricsManage
+import subprocess
+import sys
 
 class RSA_GUI:
     def __init__(self, root):
@@ -100,7 +102,9 @@ class RSA_GUI:
         self.rounds_var = tk.StringVar(value="100000")
         ttk.Entry(crack_frame, textvariable=self.rounds_var, width=70, font=self.mono_font).pack(pady=5)
 
-        ttk.Button(crack_frame, text="Crack with Fermat's Method", command=self.on_crack).pack(pady=20)
+        ttk.Button(crack_frame, text="Crack with Fermat's Method", command=self.on_crack).pack(pady=10)
+        
+        ttk.Button(crack_frame, text="Generate Performance Graphs", command=self.on_generate_graph).pack(pady=(0, 20))
 
         self.crack_output = tk.scrolledtext.ScrolledText(crack_frame, height=16, width=75, font=self.mono_font, 
                                     bg=self.output_bg, state=tk.DISABLED, wrap="word")
@@ -239,6 +243,12 @@ class RSA_GUI:
 
         except ValueError:
             messagebox.showerror("Error", "Please enter a valid integer for both Modulus (n) and Exponent (e).")
+
+    def on_generate_graph(self):
+        try:
+            subprocess.Popen([sys.executable, "GenerateGraphs.py"])
+        except Exception as e:
+            messagebox.showerror("Graph Error", f"Failed to launch graphing script: {str(e)}")
 
 if __name__ == "__main__":
     root = tk.Tk()

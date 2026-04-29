@@ -29,11 +29,6 @@ class rsaKey:
             self.n = 5
         else:
             self.n = n
-                
-        if(not isinstance(bitlength, int) or bitlength < 0):
-            self.bitlength = 8
-        else:
-            self.bitlength = bitlength
 
     def to_dict(self):
         """
@@ -91,17 +86,18 @@ class rsaKey:
         block_size = math.floor(math.log2(self.n)) - 1
         num_blocks = math.ceil(text_len/block_size)
         all_bytes = bytearray(block_size * num_blocks)
+        text_bytes = bytearray(text, "utf-8")
         for c in range(0, text_len):
-            all_bytes[c] = text[c]
+            all_bytes[c] = text_bytes[c]
         blocks = all_bytes[0::block_size]
         for x in range(0, num_blocks):
-            number = pow(int.from_bytes(blocks[x]), self.e, self.n)
+            number = pow(int.from_bytes(bytes(blocks[x])), self.e, self.n)
             block = number.to_bytes(block_size)
             for c in range(0, block_size):
                 all_bytes[(x*block_size)+c] = block[c]
         return all_bytes;
 
-    def decrypt(self, all_bytes: bytes):
+    def decrypt(self, all_bytes: bytearray):
         """
         Decrypt text using this key
 
@@ -113,8 +109,8 @@ class rsaKey:
         num_blocks = math.ceil(num_bytes/block_size)
         blocks = all_bytes[0::block_size]
         for x in range(0, num_blocks):
-            number = pow(int.from_bytes(blocks), self.e, self.n)
-            block = number.to_bytes(block_size)
+            number = pow(int.from_bytes(bytes(blocks)), self.e, self.n)
+            block = bytearray(number.to_bytes(block_size))
             for c in range(0, block_size):
                 all_bytes[(x*block_size)+c] = block[c]
-        return all_bytes.encode()
+        return all_bytes.decode("utf-8")

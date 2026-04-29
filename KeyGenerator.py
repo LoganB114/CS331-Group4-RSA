@@ -72,8 +72,13 @@ def generate_close_primes(bitlength):
     p = generate_prime(bitlength // 2)
     # Generate q close to p
     q = p
+    if (q-1) % 6 == 0:
+        q += 4 # start with 6n-1 form
     while True:
         q += 2
+        if miller_rabin_test(q):
+            break
+        q+= 4 # alternate between 6n+1 and 6n-1 forms
         if miller_rabin_test(q):
             break
     return p, q
@@ -135,12 +140,12 @@ def generate_keypair(bitlength, p=None, q=None, e=None, close_primes=False):
     Returns:
         rsaKey: Complete RSA key pair object
     """
-    if (p is not None and q is not None):
-        if not (miller_rabin_test(p) and miller_rabin_test(q)):
-            raise ValueError("Both p and q must be prime.")
+    if close_primes:
+        p, q = generate_close_primes(bitlength)
     else:
-        if close_primes:
-            p, q = generate_close_primes(bitlength)
+        if (p is not None and q is not None):
+            if not (miller_rabin_test(p) and miller_rabin_test(q)):
+                raise ValueError("Both p and q must be prime.")
         else:
             p = generate_prime(bitlength // 2)
             q = generate_prime(bitlength // 2)

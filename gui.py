@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from tkinter import scrolledtext
 import time
 import KeyGenerator
 from FermatCracker import crack
@@ -54,20 +55,22 @@ class RSA_GUI:
 
         btn_frame = ttk.Frame(gen_frame)
         btn_frame.pack(pady=5)
+
         ttk.Button(btn_frame, text="Generate RSA Keys", command=self.on_generate_keys).pack(side="left", padx=5)
         ttk.Button(btn_frame, text="Save Keys to File", command=self.on_save_keys).pack(side="left", padx=5)
         
         # Output box set to disabled/read-only by default
-        self.gen_output = tk.Text(gen_frame, height=14, width=75, font=self.mono_font, 
+        self.gen_output = tk.scrolledtext.ScrolledText(gen_frame, height=14, width=75, font=self.mono_font, 
                                   bg=self.output_bg, state=tk.DISABLED, wrap="word")
         self.gen_output.pack(pady=15, padx=10)
+
 
     def setup_cipher_tab(self):
         cipher_frame = ttk.Frame(self.notebook)
         self.notebook.add(cipher_frame, text=" 2. Encrypt / Decrypt ")
 
         ttk.Label(cipher_frame, text="Enter ASCII Message or Ciphertext:").pack(pady=(15, 5))
-        self.message_input = tk.Text(cipher_frame, height=6, width=75, font=self.mono_font, wrap="word")
+        self.message_input = tk.scrolledtext.ScrolledText(cipher_frame, height=6, width=75, font=self.mono_font, wrap="word")
         self.message_input.pack(pady=5, padx=10)
 
         btn_frame = ttk.Frame(cipher_frame)
@@ -77,7 +80,7 @@ class RSA_GUI:
         
         ttk.Button(cipher_frame, text="Load Keys from File", command=self.on_load_keys).pack(pady=5)
 
-        self.cipher_output = tk.Text(cipher_frame, height=13, width=75, font=self.mono_font, 
+        self.cipher_output = tk.scrolledtext.ScrolledText(cipher_frame, height=13, width=75, font=self.mono_font, 
                                      bg=self.output_bg, state=tk.DISABLED, wrap="word")
         self.cipher_output.pack(pady=15, padx=10)
 
@@ -95,7 +98,7 @@ class RSA_GUI:
 
         ttk.Button(crack_frame, text="Crack with Fermat's Method", command=self.on_crack).pack(pady=20)
 
-        self.crack_output = tk.Text(crack_frame, height=16, width=75, font=self.mono_font, 
+        self.crack_output = tk.scrolledtext.ScrolledText(crack_frame, height=16, width=75, font=self.mono_font, 
                                     bg=self.output_bg, state=tk.DISABLED, wrap="word")
         self.crack_output.pack(pady=10, padx=10)
 

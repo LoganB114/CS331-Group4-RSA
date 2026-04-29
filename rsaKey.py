@@ -77,26 +77,44 @@ class rsaKey:
             # Bridger FIX: Convert the strings to ints before creating the rsaKey
             return rsaKey(int(data[0]), int(data[1]))
 
-    def encrypt(self, text):
-            buffer = int.from_bytes(bytes(text, "utf-8"), byteorder="big")
-            
-            #Bridger ADDED: Prevent the math from wrapping around and destroying data
-            if buffer >= self.n:
-                raise ValueError(f"Message is too large for this RSA key. Please use a larger bit length.")
-                
-            buffer = pow(buffer, self.e, self.n)
-            buffer = buffer.to_bytes((buffer.bit_length() + 7) // 8, byteorder="big")
-            return base64.b64encode(buffer)
+    def encrypt(self, text: str):
+        """
+        Encrypt text using this key
 
-    def decrypt(self, text):
-        """
-        Decrypt a base64-encoded ciphertext string using the RSA key.
         Args:
-            text (str): Base64-encoded ciphertext to decrypt
-        Returns:
-            str: Decrypted plaintext string resulting from RSA decryption
+            text (str): Text to encrypt
         """
-        buffer = int.from_bytes(base64.b64decode(text))
-        buffer = pow(buffer, self.e, self.n)
-        buffer = buffer.to_bytes((buffer.bit_length() + 7) // 8)
-        return buffer.decode("utf-8")
+        # Determin the block size
+        # If n bytes are required to store n, we need n - 1 bytes
+        # so that a < n
+        text_len = len(text)
+        block_size = math.floor(math.log2(self.n)) - 1
+        num_blocks = math.ceil(text_len/block_size)
+        all_bytes = bytearray(block_size * num_blocks)
+        for c in range(0, text_len):
+            all_bytes[c] = text[c]
+        blocks = all_bytes[0::block_size]
+        for x in range(0, num_blocks):
+            number = pow(int.from_bytes(blocks[x]), self.e, self.n)
+            block = number.to_bytes(block_size)
+            for c in range(0, block_size):
+                all_bytes[(x*block_size)+c] = block[c]
+        return all_bytes;
+
+    def decrypt(self, all_bytes: bytes):
+        """
+        Decrypt text using this key
+
+        Args:
+            text (bytes): Base64 text to decrypt
+        """
+        num_bytes = len(all_bytes)
+        block_size = math.floor(math.log2(self.n)) - 1
+        num_blocks = math.ceil(num_bytes/block_size)
+        blocks = all_bytes[0::block_size]
+        for x in range(0, num_blocks):
+            number = pow(int.from_bytes(blocks), self.e, self.n)
+            block = number.to_bytes(block_size)
+            for c in range(0, block_size):
+                all_bytes[(x*block_size)+c] = block[c]
+        return all_bytes.encode()

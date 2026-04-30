@@ -72,13 +72,14 @@ class rsaKey:
             # Bridger FIX: Convert the strings to ints before creating the rsaKey
             return rsaKey(int(data[0]), int(data[1]))
 
-    def encrypt(self, text: bytes):
+    def encrypt(self, text: str):
         """
         Encrypt text using this key
 
         Args:
             text (str): Text to encrypt
         """
+        text = text.encode()
         if len(text) > self.maxDataSize():
             raise ValueError("Text is to long to encode")
         number = pow(int.from_bytes(text), self.e, self.n)
@@ -94,7 +95,8 @@ class rsaKey:
         cypher_bytes = base64.b64decode(cypher_text)
         if len(cypher_bytes) > self.__nSize():
             raise ValueError("Cypher Text is to long to decode")
-        text_bytes = pow(int.from_bytes(cypher_bytes), self.e, self.n).to_bytes(self.maxDataSize())
+        number = pow(int.from_bytes(cypher_bytes), self.e, self.n)
+        text_bytes = number.to_bytes((number.bit_length() + 7) //8)
         return text_bytes.decode() 
 
     def maxDataSize(self):

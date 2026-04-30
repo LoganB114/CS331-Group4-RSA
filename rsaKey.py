@@ -83,16 +83,16 @@ class rsaKey:
         if len(text) > self.maxDataSize():
             raise ValueError("Text is to long to encode")
         number = pow(int.from_bytes(text), self.e, self.n)
-        return base64.b64encode(number.to_bytes(self.__nSize()))
+        return base64.b64encode(number.to_bytes(self.__nSize())).decode("utf-8")
 
-    def decrypt(self, cypher_text: bytes):
+    def decrypt(self, cypher_text: str):
         """
         Decrypt text using this key
 
         Args:
             text (bytes): Base64 text to decrypt
         """
-        cypher_bytes = base64.b64decode(cypher_text)
+        cypher_bytes = base64.b64decode(cypher_text.encode("utf-8"))
         if len(cypher_bytes) > self.__nSize():
             raise ValueError("Cypher Text is to long to decode")
         number = pow(int.from_bytes(cypher_bytes), self.e, self.n)

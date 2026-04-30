@@ -179,8 +179,7 @@ class RSA_GUI:
             self.cipher_output.config(state=tk.DISABLED)
             return
         try:
-            encrypted_bytes = self.public_key.encrypt(message)
-            encrypted_text = encrypted_bytes.decode('utf-8')
+            encrypted_text = self.public_key.encrypt(message)
             self.cipher_output.insert(tk.END, "--- ENCRYPTED CIPHERTEXT (Base64) ---\n\n")
             self.cipher_output.insert(tk.END, encrypted_text)
         except Exception as e:

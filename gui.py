@@ -66,7 +66,6 @@ class RSA_GUI:
                                   bg=self.output_bg, state=tk.DISABLED, wrap="word")
         self.gen_output.pack(pady=15, padx=10)
 
-
     def setup_cipher_tab(self):
         cipher_frame = ttk.Frame(self.notebook)
         self.notebook.add(cipher_frame, text=" 2. Encrypt / Decrypt ")
@@ -89,6 +88,8 @@ class RSA_GUI:
     def setup_cracker_tab(self):
         crack_frame = ttk.Frame(self.notebook)
         self.notebook.add(crack_frame, text=" 3. Fermat Cracker ")
+
+        ttk.Button(crack_frame, text="Load Keys from File", command=self.on_load_public_key).pack(pady=5)
 
         ttk.Label(crack_frame, text="Target Public Modulus (n):").pack(pady=(15, 5))
         self.target_n_var = tk.StringVar()
@@ -165,6 +166,15 @@ class RSA_GUI:
             messagebox.showinfo("Success", "Keys successfully loaded from 'public_key.tsv' and 'private_key.tsv'!")
         except FileNotFoundError:
             messagebox.showerror("Error", "Key files not found! Please generate and save keys first.")
+        except Exception as e:
+            messagebox.showerror("Load Error", f"An error occurred: {str(e)}")
+
+    def on_load_public_key(self):
+        try:
+            self.public_key = rsaKey.load_from_file("public_key.tsv")
+            self.target_n_var.set(self.public_key.n)
+        except FileNotFoundError:
+            messagebox.showerror("Error", "Key file not found! Please generate and save keys first.")
         except Exception as e:
             messagebox.showerror("Load Error", f"An error occurred: {str(e)}")
 

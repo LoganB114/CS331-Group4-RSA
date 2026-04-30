@@ -53,7 +53,7 @@ class rsaKey:
         """
         with open(filename, 'w', newline='') as f:
             writer = csv.writer(f, delimiter='\t')
-            writer.writerow([self.e, self.n, self.bitlength])
+            writer.writerow([self.e, self.n])
 
     @staticmethod
     def load_from_file(filename):
@@ -72,47 +72,33 @@ class rsaKey:
             # Bridger FIX: Convert the strings to ints before creating the rsaKey
             return rsaKey(int(data[0]), int(data[1]))
 
-    def encrypt(self, text: str):
+    def encrypt(self, text: bytes):
         """
         Encrypt text using this key
 
         Args:
             text (str): Text to encrypt
         """
-        # Determin the block size
-        # If n bytes are required to store n, we need n - 1 bytes
-        # so that a < n
-        text_len = len(text)
-        n_size = (self.n.bit_length() + 7) // 8
-        block_size = n_size - 1
-        num_blocks = math.ceil(text_len/block_size)
-        #text_bytes = bytearray(text, "utf-8")
-        text_bytes = bytearray((block_size*num_blocks)-text_len)
-        text_bytes.extend(bytearray(text, "utf-8"))
-        all_bytes = bytearray()
-        blocks = text_bytes[0::block_size]
-        if isinstance(blocks, bytearray):
-            blocks = [blocks]
-        for x in range(0, num_blocks):
-            number = pow(int.from_bytes(blocks[x].to_bytes()), self.e, self.n)
-            all_bytes.extend(number.to_bytes(n_size))
-        return all_bytes
+        if len(text) > self.maxDataSize():
+            raise ValueError("Text is to long to encode")
+        number = pow(int.from_bytes(text), self.e, self.n)
+        return base64.b64encode(number.to_bytes(self.__nSize()))
 
-    def decrypt(self, all_bytes: bytearray):
+    def decrypt(self, cypher_text: bytes):
         """
         Decrypt text using this key
 
         Args:
             text (bytes): Base64 text to decrypt
         """
-        byte_size = len(all_bytes)
-        n_size = (self.n.bit_length() + 7) // 8
-        block_size = n_size - 1
-        num_blocks = math.ceil(byte_size/n_size)
-        text = bytearray()
-        blocks = all_bytes[0::n_size]
-        for x in range(0, num_blocks):
-            number = pow(int.from_bytes(blocks[x].to_bytes()), self.e, self.n)
-            n_block = number.to_bytes(n_size)
-            text.extend(n_block)
-        return text
+        cypher_bytes = base64.b64decode(cypher_text)
+        if len(cypher_bytes) > self.__nSize():
+            raise ValueError("Cypher Text is to long to decode")
+        text_bytes = pow(int.from_bytes(cypher_bytes), self.e, self.n).to_bytes(self.maxDataSize())
+        return text_bytes.decode() 
+
+    def maxDataSize(self):
+        return (self.n.bit_length()) // 8
+
+    def __nSize(self):  
+        return (self.n.bit_length() + 7) // 8

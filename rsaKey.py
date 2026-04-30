@@ -73,11 +73,12 @@ class rsaKey:
             return rsaKey(int(data[0]), int(data[1]))
         
     def encryptStr(self, text: str):
+        text = text.encode()
         result = ""
         while len(text) > 0:
             block = text[:self.maxDataSize()]
             text = text[self.maxDataSize():]
-            encoded_block = self.encrypt(block)
+            encoded_block = self.encrypt(block, True)
             result += encoded_block + ":"
         return result
     
@@ -89,14 +90,15 @@ class rsaKey:
             result += decrypted_block
         return result
 
-    def encrypt(self, text: str):
+    def encrypt(self, text: str, encoded=False):
         """
         Encrypt text using this key
 
         Args:
             text (str): Text to encrypt
         """
-        text = text.encode()
+        if not encoded:
+            text = text.encode()
         if len(text) > self.maxDataSize():
             raise ValueError("Text is to long to encode")
         number = pow(int.from_bytes(text), self.e, self.n)

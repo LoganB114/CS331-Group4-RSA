@@ -1,0 +1,147 @@
+---
+config:
+  layout: dagre
+  theme: neutral
+  class:
+    hideEmptyMembersBox: false
+  look: neo
+---
+classDiagram
+direction TB
+    class FermatCracker {
+	    +bool is_perfect_square(n:int)
+	    +int, int factorize(n:int, rounds:int)
+	    +RsaKey crack(n:int, exponent:int, rounds:int)
+    }
+
+    class KeyGenerator {
+	    +bool miller_rabin_test(n:int, k:int)
+	    +int generate_prime(bitlength:int)
+	    +int, int generate_close_primes(bitlength:int)
+	    +int, int, int extended_gcd(a:int, b:int)
+	    +int modular_inverse(e:int, phi:int)
+	    +RsaKey, RsaKey generate_keypair(bitlength:int, p:int, q:int, e:int, close_primes:boolean)
+    }
+
+    class RsaKey {
+	    -e:int
+	    -n:int
+	    +__init__(e:int, n:int)
+	    +dict to_dict()
+	    +save_to_file(filename:str)
+	    +str encryptStr(text:str)
+	    +str decryptStr(cypher_text:str)
+	    +str encrypt(text:str, encoded:boolean)
+	    +str decrypt(cypher_text:str)
+	    +int maxDataSize()
+	    -int nSize()
+    }
+
+    class math {
+	    extern
+    }
+
+
+    class pandas {
+	    extern
+    }
+
+    class `matplotlib.pyplot` {
+	    extern
+    }
+
+    class random {
+	    extern
+    }
+
+    class MetricsManage {
+	    +log_crack_time(modulus_bit_length:int, rounds:int, elapsed_ms:float, success:boot)
+    }
+
+    class csv {
+	    extern
+    }
+
+    class os {
+	    extern
+    }
+
+    class RsaGui {
+	    -root:tkinter
+	    +__init__(root:tkinter)
+	    +setup_generation_tab()
+	    +setup_cipher_tab()
+	    +setup_cracker_tab()
+	    +on_generate_keys()
+	    +on_save_keys()
+	    +on_load_keys()
+	    +on_encrypt()
+	    +on_decrypt()
+	    +on_crack()
+	    +on_generate_graph()
+	    +__main__()
+    }
+
+    class tkinter {
+	    extern
+    }
+
+    class time {
+	    extern
+    }
+
+    class subprocess {
+	    extern
+    }
+
+    class sys {
+	    extern
+    }
+
+    class base64 {
+	    extern
+    }
+
+    class TestFile {
+	    +test_init()
+	    +test_negatives()
+	    +test_noStrings()
+	    +test_encrypt()
+	    +test_round_trip()
+	    +test_round_trip()
+	    +test_math_utilities()
+	    +test_fermat_crack()
+	    +test_security_constraints()
+    }
+
+    class unittest {
+	    extern
+    }
+
+    class GenerateGraphs {
+	    +create_performance_graphs()
+	    +__main__()
+    }
+    
+    FermatCracker --> math
+    FermatCracker --> RsaKey
+    FermatCracker --> KeyGenerator
+    KeyGenerator --> random
+    KeyGenerator --> RsaKey
+    MetricsManage --> csv
+    MetricsManage --> os
+    RsaGui --> FermatCracker
+    RsaGui --> KeyGenerator
+    RsaGui --> time
+    RsaGui --> subprocess
+    RsaGui --> tkinter
+    RsaGui --> sys
+    RsaGui --> RsaKey
+    RsaGui --> MetricsManage
+    RsaKey --> base64
+    RsaKey --> csv
+    TestFile --> KeyGenerator
+    TestFile --> unittest
+    TestFile --> RsaKey
+    GenerateGraphs --> `matplotlib.pyplot`
+    GenerateGraphs --> pandas

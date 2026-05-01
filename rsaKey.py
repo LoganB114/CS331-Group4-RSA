@@ -1,6 +1,5 @@
 import csv
 import base64
-import math
 
 class RsaKey:
     """

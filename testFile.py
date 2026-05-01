@@ -9,7 +9,7 @@ import unittest
 import RsaKey as rk
 import KeyGenerator as kg
 
-class Test_file(unittest.TestCase):
+class TestFile(unittest.TestCase):
 
     def test_init(self):
         """

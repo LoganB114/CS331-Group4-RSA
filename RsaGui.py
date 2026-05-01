@@ -4,12 +4,12 @@ from tkinter import scrolledtext
 import time
 import KeyGenerator
 from FermatCracker import crack
-from rsaKey import rsaKey
-from MetricsManage import MetricsManage
+from RsaKey import RsaKey
+import MetricsManage
 import subprocess
 import sys
 
-class RSA_GUI:
+class RsaGui:
     def __init__(self, root):
         self.root = root
         self.root.title("RSA Key Cracking Suite - CS 331")
@@ -161,8 +161,8 @@ class RSA_GUI:
 
     def on_load_keys(self):
         try:
-            self.public_key = rsaKey.load_from_file("public_key.tsv")
-            self.private_key = rsaKey.load_from_file("private_key.tsv")
+            self.public_key = RsaKey.load_from_file("public_key.tsv")
+            self.private_key = RsaKey.load_from_file("private_key.tsv")
             messagebox.showinfo("Success", "Keys successfully loaded from 'public_key.tsv' and 'private_key.tsv'!")
         except FileNotFoundError:
             messagebox.showerror("Error", "Key files not found! Please generate and save keys first.")
@@ -171,7 +171,7 @@ class RSA_GUI:
 
     def on_load_public_key(self):
         try:
-            self.public_key = rsaKey.load_from_file("public_key.tsv")
+            self.public_key = RsaKey.load_from_file("public_key.tsv")
             self.target_n_var.set(self.public_key.n)
         except FileNotFoundError:
             messagebox.showerror("Error", "Key file not found! Please generate and save keys first.")
@@ -261,5 +261,5 @@ class RSA_GUI:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = RSA_GUI(root)
+    app = RsaGui(root)
     root.mainloop()

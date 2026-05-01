@@ -2,7 +2,7 @@ import csv
 import base64
 import math
 
-class rsaKey:
+class RsaKey:
     """
     RSA Key data structure that holds all components of an RSA key pair.
 
@@ -70,7 +70,7 @@ class rsaKey:
             reader = csv.reader(f, delimiter='\t')
             data = next(reader)
             # Bridger FIX: Convert the strings to ints before creating the rsaKey
-            return rsaKey(int(data[0]), int(data[1]))
+            return RsaKey(int(data[0]), int(data[1]))
         
     def encryptStr(self, text: str):
         text = text.encode()

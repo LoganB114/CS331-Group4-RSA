@@ -1,7 +1,7 @@
 import random
-from rsaKey import rsaKey
+from RsaKey import RsaKey
 
-def miller_rabin_test(n, k=40):
+def miller_rabin_test(n:int, k=40):
     """
     Perform Miller-Rabin probabilistic primality test. So, Miller-Rabin can sometimes be wrong. The reason we do 40 different
     witness iterations is to make it unbelievably unlikely that the prime is a false composite. 
@@ -38,7 +38,7 @@ def miller_rabin_test(n, k=40):
             return False
     return True
 
-def generate_prime(bitlength):
+def generate_prime(bitlength:int):
     """
     Generate a random prime number of specified bit length.
 
@@ -54,7 +54,7 @@ def generate_prime(bitlength):
         if miller_rabin_test(candidate):
             return candidate
 
-def generate_close_primes(bitlength):
+def generate_close_primes(bitlength:int):
     """
     Generate two prime numbers that are close together.
 
@@ -83,7 +83,7 @@ def generate_close_primes(bitlength):
             break
     return p, q
 
-def extended_gcd(a, b):
+def extended_gcd(a:int, b:int):
     """
     Compute the extended Euclidean algorithm.
 
@@ -105,7 +105,7 @@ def extended_gcd(a, b):
     y = x1
     return gcd, x, y
 
-def modular_inverse(e, phi):
+def modular_inverse(e:int, phi:int):
     """
     Compute the modular inverse of e modulo phi.
 
@@ -138,7 +138,7 @@ def generate_keypair(bitlength, p=None, q=None, e=None, close_primes=False):
                             (vulnerable to Fermat factorization)
 
     Returns:
-        rsaKey: Complete RSA key pair object
+        RsaKey: Complete RSA key pair object
     """
     if close_primes:
         p, q = generate_close_primes(bitlength)
@@ -161,4 +161,4 @@ def generate_keypair(bitlength, p=None, q=None, e=None, close_primes=False):
         e = 65537  # Common choice for e
     d = modular_inverse(e, phi)
 
-    return rsaKey(e, n), rsaKey(d, n)
+    return RsaKey(e, n), RsaKey(d, n)

@@ -1,8 +1,8 @@
-from rsaKey import rsaKey
+from RsaKey import RsaKey
 import KeyGenerator
 import math
 
-def is_perfect_square(n):
+def is_perfect_square(n:int):
     """
     Check if n is a perfect square.
     Args:
@@ -16,7 +16,7 @@ def is_perfect_square(n):
     root = math.isqrt(n)
     return root * root == n
 
-def factorize(n, rounds=100000):
+def factorize(n:int, rounds=100000):
     """
     Factorize n using Fermat's factorization method.
     Args:
@@ -37,15 +37,15 @@ def factorize(n, rounds=100000):
         x += 1
     return None
 
-def crack(n, publicExponent, rounds=100000):
+def crack(n:int, exponent:int, rounds=100000):
     """
     Attempt to crack an RSA key by factorizing n using Fermat's method.
     Args:
         n (int): The RSA modulus
-        publicExponent (int): The RSA public exponent
+        exponent (int): The RSA public exponent
         rounds (int): Number of rounds to attempt in factorization
     Returns:
-        rsaKey: The cracked RSA key, or None if factorization fails
+        RsaKey: The cracked RSA key, or None if factorization fails
     """
     factors = factorize(n, rounds)
     if factors is None:
@@ -55,8 +55,8 @@ def crack(n, publicExponent, rounds=100000):
     
     try:
         # Bridger Calculate the private key (d)
-        d = KeyGenerator.modular_inverse(publicExponent, phi)
-        # Bridger Return a new rsaKey holding the private key and modulus
-        return rsaKey(d, n)
+        d = KeyGenerator.modular_inverse(exponent, phi)
+        # Bridger Return a new RsaKey holding the private key and modulus
+        return RsaKey(d, n)
     except ValueError:
         return None

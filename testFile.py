@@ -6,7 +6,7 @@ self.assertFalse
 """
 
 import unittest
-import rsaKey as rk
+import RsaKey as rk
 import KeyGenerator as kg
 
 class Test_file(unittest.TestCase):
@@ -83,7 +83,6 @@ class Test_file(unittest.TestCase):
         # This message is way too large for n=143
         with self.assertRaises(ValueError):
             tiny_pub.encrypt("This message is much too long for a tiny key")
-
 
 if __name__ == '__main__':
     unittest.main()

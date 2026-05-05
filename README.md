@@ -2,8 +2,6 @@
 
 ## Project Overview
 
-Evil
-
 - **`rsaKey`**: Data structure for RSA key components
 - **`KeyGenerator`**: Prime generation and key pair creation using Miller-Rabin primality testing
 

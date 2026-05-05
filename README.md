@@ -5,6 +5,10 @@
 - **`rsaKey`**: Data structure for RSA key components
 - **`KeyGenerator`**: Prime generation and key pair creation using Miller-Rabin primality testing
 
+## Running the program
+
+To ensure that all modules used are installed correctly run `make install`. With all modules installed, run `make` to run the program.
+
 ## Documentation
 
 The code is fully documented with comprehensive Python docstrings that explain:
